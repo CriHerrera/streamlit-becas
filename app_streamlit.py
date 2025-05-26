@@ -7,9 +7,9 @@ Created on Mon May 19 11:24:36 2025
 
 import pandas as pd
 import streamlit as st
-import os
+import urllib.parse
 
-# Paths
+# ========== Carga de datos ==========
 becas = pd.read_csv('becas_procesadas_para_dash.csv', sep=';')
 
 # Colapsar por name y numero_corrida
@@ -31,9 +31,7 @@ pivot_pasos = pd.crosstab(becas['nombre_de_la_beca'], becas['n_pasos'])
 pivot_pasos.columns = [f'{col} Pasos' for col in pivot_pasos.columns]
 pivot_pasos = pivot_pasos.reset_index().rename(columns={'nombre_de_la_beca': 'Nombre de la Beca'})
 
-# ==== Streamlit App ====
-
-# Estilos base
+# ========== Configuración Streamlit ==========
 st.set_page_config(page_title="Análisis de Becas Chile", layout="wide")
 
 # Header
@@ -46,17 +44,61 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# Tabs
-tab1, tab2, tab3 = st.tabs(["Estudiantes Nuevos/Antiguos", "Requisitos", "Pasos"])
+# ========== Capturar parámetro desde URL ==========
+params = st.query_params
+beca_param = params.get("name", [None])[0]
 
-with tab1:
-    st.markdown("### Frecuencia de Estudiantes Nuevos/Antiguos por Beca")
-    st.dataframe(pivot_estudiantes, use_container_width=True)
+# ========== Mostrar beca individual si se pasa name ==========
+if beca_param and beca_param in becas['name'].unique():
+    st.markdown(f"### 📌 Reporte individual para: **{beca_param}**")
 
-with tab2:
-    st.markdown("### Frecuencia de Requisitos por Beca")
-    st.dataframe(pivot_requisitos, use_container_width=True)
+    # Filtrar
+    beca_est = pivot_estudiantes[pivot_estudiantes['Nombre de la Beca'] == beca_param]
+    beca_req = pivot_requisitos[pivot_requisitos['Nombre de la Beca'] == beca_param]
+    beca_pasos = pivot_pasos[pivot_pasos['Nombre de la Beca'] == beca_param]
 
-with tab3:
-    st.markdown("### Frecuencia de Pasos por Beca")
-    st.dataframe(pivot_pasos, use_container_width=True)
+    # Tabs
+    tab1, tab2, tab3 = st.tabs(["Estudiantes Nuevos/Antiguos", "Requisitos", "Pasos"])
+
+    with tab1:
+        st.markdown("#### Frecuencia de Estudiantes Nuevos/Antiguos")
+        st.dataframe(beca_est, use_container_width=True)
+
+    with tab2:
+        st.markdown("#### Requisitos para la Beca")
+        st.dataframe(beca_req, use_container_width=True)
+
+    with tab3:
+        st.markdown("#### Pasos para Postulación")
+        st.dataframe(beca_pasos, use_container_width=True)
+
+# ========== Si no hay parámetro, mostrar todas las becas con links ==========
+else:
+    st.info("Selecciona una beca desde los siguientes enlaces para ver su reporte individual.")
+
+    # Mostrar links por nombre de beca
+    st.markdown("### 🔗 Becas disponibles:")
+
+    for nombre_beca in sorted(becas['name'].unique()):
+        encoded = urllib.parse.quote(nombre_beca)
+        link = f"?name={encoded}"
+        st.markdown(f"- [{nombre_beca}]({link})", unsafe_allow_html=True)
+
+    # Opcional: mostrar resumen general también
+    st.markdown("---")
+    st.markdown("### 📊 Resumen general de todas las becas")
+
+    tab1, tab2, tab3 = st.tabs(["Estudiantes Nuevos/Antiguos", "Requisitos", "Pasos"])
+
+    with tab1:
+        st.markdown("#### Frecuencia por tipo de estudiante")
+        st.dataframe(pivot_estudiantes, use_container_width=True)
+
+    with tab2:
+        st.markdown("#### Frecuencia de requisitos por beca")
+        st.dataframe(pivot_requisitos, use_container_width=True)
+
+    with tab3:
+        st.markdown("#### Frecuencia de pasos por beca")
+        st.dataframe(pivot_pasos, use_container_width=True)
+
