@@ -50,13 +50,12 @@ params = st.query_params
 beca_param = params.get("name", [None])[0]
 
 # ========== Mostrar beca individual si se pasa name ==========
-if beca_param and any(becas['name'].str.strip().str.lower() == beca_param.strip().lower()):
-    # Obtener el nombre largo desde la columna 'nombre_de_la_beca'
-    nombre_visible = becas.loc[
-        becas['name'].str.strip().str.lower() == beca_param.strip().lower(),
-        'nombre_de_la_beca'
-    ].values
-    nombre_visible = nombre_visible[0] if len(nombre_visible) > 0 else beca_param
+beca_param_lower = beca_param.strip().lower() if beca_param else None
+match_mask = becas['name'].astype(str).str.strip().str.lower() == beca_param_lower
+
+if beca_param and match_mask.any():
+    # Obtener el nombre largo desde 'nombre_de_la_beca'
+    nombre_visible = becas.loc[match_mask, 'nombre_de_la_beca'].values[0]
 
     # Encabezado visual personalizado
     st.markdown(f"""
@@ -67,9 +66,9 @@ if beca_param and any(becas['name'].str.strip().str.lower() == beca_param.strip(
     """, unsafe_allow_html=True)
 
     # Filtrar
-    beca_est = pivot_estudiantes[pivot_estudiantes['Nombre de la Beca'].str.lower() == beca_param.strip().lower()]
-    beca_req = pivot_requisitos[pivot_requisitos['Nombre de la Beca'].str.lower() == beca_param.strip().lower()]
-    beca_pasos = pivot_pasos[pivot_pasos['Nombre de la Beca'].str.lower() == beca_param.strip().lower()]
+    beca_est = pivot_estudiantes[pivot_estudiantes['Nombre de la Beca'].str.lower() == nombre_visible.lower()]
+    beca_req = pivot_requisitos[pivot_requisitos['Nombre de la Beca'].str.lower() == nombre_visible.lower()]
+    beca_pasos = pivot_pasos[pivot_pasos['Nombre de la Beca'].str.lower() == nombre_visible.lower()]
 
     # Tabs
     tab1, tab2, tab3 = st.tabs(["Estudiantes Nuevos/Antiguos", "Requisitos", "Pasos"])
@@ -85,3 +84,21 @@ if beca_param and any(becas['name'].str.strip().str.lower() == beca_param.strip(
     with tab3:
         st.markdown("#### Pasos para Postulación")
         st.dataframe(beca_pasos, use_container_width=True)
+
+# ========== Si no hay parámetro válido, mostrar resumen ==========
+else:
+    st.markdown("### 📊 Resumen general de todas las becas")
+
+    tab1, tab2, tab3 = st.tabs(["Estudiantes Nuevos/Antiguos", "Requisitos", "Pasos"])
+
+    with tab1:
+        st.markdown("#### Frecuencia por tipo de estudiante")
+        st.dataframe(pivot_estudiantes, use_container_width=True)
+
+    with tab2:
+        st.markdown("#### Frecuencia de requisitos por beca")
+        st.dataframe(pivot_requisitos, use_container_width=True)
+
+    with tab3:
+        st.markdown("#### Frecuencia de pasos por beca")
+        st.dataframe(pivot_pasos, use_container_width=True)
