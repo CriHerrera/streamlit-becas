@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Mon May 19 11:24:36 2025
+@author: crish
+"""
+
 import pandas as pd
 import streamlit as st
 import urllib.parse
@@ -9,21 +15,19 @@ becas = pd.read_csv('becas_procesadas_para_dash.csv', sep=';')
 # Colapsar por name y numero_corrida
 becas_collapsed = becas.groupby(['name', 'numero_corrida']).first().reset_index()
 
-# Tabla de estudiantes nuevos/antiguos
+# Crear tablas dinámicas
 pivot_estudiantes = pd.crosstab(
-    becas_collapsed['name'],
+    becas_collapsed['numero_corrida'],
     becas_collapsed['para_estudiantes_nuevos_y_antiguos_o_no']
-).reset_index().rename(columns={'name': 'Nombre de la Beca'})
+).reset_index()
 
-# Tabla de requisitos
-pivot_requisitos = pd.crosstab(becas['nombre_de_la_beca'], becas['n_requisitos'])
+pivot_requisitos = pd.crosstab(becas['numero_corrida'], becas['n_requisitos'])
 pivot_requisitos.columns = [f'{col} Requisitos' for col in pivot_requisitos.columns]
-pivot_requisitos = pivot_requisitos.reset_index().rename(columns={'nombre_de_la_beca': 'Nombre de la Beca'})
+pivot_requisitos = pivot_requisitos.reset_index()
 
-# Tabla de pasos
-pivot_pasos = pd.crosstab(becas['nombre_de_la_beca'], becas['n_pasos'])
+pivot_pasos = pd.crosstab(becas['numero_corrida'], becas['n_pasos'])
 pivot_pasos.columns = [f'{col} Pasos' for col in pivot_pasos.columns]
-pivot_pasos = pivot_pasos.reset_index().rename(columns={'nombre_de_la_beca': 'Nombre de la Beca'})
+pivot_pasos = pivot_pasos.reset_index()
 
 # ========== Configuración Streamlit ==========
 st.set_page_config(page_title="Análisis de Becas Chile", layout="wide")
@@ -40,55 +44,53 @@ st.markdown(
 
 # ========== Capturar parámetro desde URL ==========
 params = st.query_params
-beca_param = params.get("name", [None])[0]
+corrida_param = params.get("corrida", [None])[0]
 
-# ========== Normalizar parámetros ==========
-if beca_param:
-    beca_param = beca_param.strip().lower()
-    becas['name_lower'] = becas['name'].astype(str).str.strip().str.lower()
-    becas['nombre_larga_lower'] = becas['nombre_de_la_beca'].astype(str).str.strip().str.lower()
+# ========== Si se pasa un número de corrida ==========
+if corrida_param:
+    corrida_str = str(corrida_param).strip()
 
-    match = becas[becas['name_lower'] == beca_param]
+    # Obtener nombre visible de esa corrida
+    match = becas[becas['numero_corrida'].astype(str) == corrida_str]
 
     if not match.empty:
-        nombre_limpio = match['name'].values[0]
         nombre_visible = match['nombre_de_la_beca'].values[0]
 
-        # Mostrar encabezado individual
+        # Header individual
         st.markdown(f"""
         <div style="background-color:#F1F6FF;padding:20px 10px;border-radius:10px;text-align:center;">
             <h2 style="color:#0C1461;margin-bottom:0;">{nombre_visible}</h2>
-            <p style="color:#444;">Reporte exclusivo generado para esta beca</p>
+            <p style="color:#444;">Reporte exclusivo generado para esta beca (corrida {corrida_str})</p>
         </div>
         """, unsafe_allow_html=True)
 
-        # Filtrar info individualmente
-        beca_est = pivot_estudiantes[pivot_estudiantes['Nombre de la Beca'].str.lower() == nombre_limpio.lower()]
-        beca_req = pivot_requisitos[pivot_requisitos['Nombre de la Beca'].str.lower() == nombre_visible.lower()]
-        beca_pasos = pivot_pasos[pivot_pasos['Nombre de la Beca'].str.lower() == nombre_visible.lower()]
+        # Filtrar por corrida
+        beca_est = pivot_estudiantes[pivot_estudiantes['numero_corrida'].astype(str) == corrida_str]
+        beca_req = pivot_requisitos[pivot_requisitos['numero_corrida'].astype(str) == corrida_str]
+        beca_pasos = pivot_pasos[pivot_pasos['numero_corrida'].astype(str) == corrida_str]
 
-        # Mostrar pestañas si hay datos
-        if not beca_est.empty or not beca_req.empty or not beca_pasos.empty:
-            tab1, tab2, tab3 = st.tabs(["Estudiantes Nuevos/Antiguos", "Requisitos", "Pasos"])
+        # Mostrar pestañas
+        tab1, tab2, tab3 = st.tabs(["Estudiantes Nuevos/Antiguos", "Requisitos", "Pasos"])
 
-            with tab1:
-                st.markdown("#### Frecuencia de Estudiantes Nuevos/Antiguos")
-                st.dataframe(beca_est, use_container_width=True)
+        with tab1:
+            st.markdown("#### Frecuencia de Estudiantes Nuevos/Antiguos")
+            st.dataframe(beca_est, use_container_width=True)
 
-            with tab2:
-                st.markdown("#### Requisitos para la Beca")
-                st.dataframe(beca_req, use_container_width=True)
+        with tab2:
+            st.markdown("#### Requisitos para la Beca")
+            st.dataframe(beca_req, use_container_width=True)
 
-            with tab3:
-                st.markdown("#### Pasos para Postulación")
-                st.dataframe(beca_pasos, use_container_width=True)
-        else:
-            st.warning("⚠️ No se encontraron datos específicos para esta beca.")
+        with tab3:
+            st.markdown("#### Pasos para Postulación")
+            st.dataframe(beca_pasos, use_container_width=True)
+
     else:
-        st.warning("⚠️ La beca indicada no fue encontrada.")
+        st.warning("⚠️ No se encontró ninguna beca con esa corrida.")
+
+# ========== Si no se pasa parámetro, mostrar resumen general ==========
 else:
-    # Si no hay parámetro, mostrar resumen
     st.markdown("### 📊 Resumen general de todas las becas")
+
     tab1, tab2, tab3 = st.tabs(["Estudiantes Nuevos/Antiguos", "Requisitos", "Pasos"])
 
     with tab1:
