@@ -50,10 +50,16 @@ params = st.query_params
 beca_param = params.get("name", [None])[0]
 
 # ========== Mostrar beca individual si se pasa name ==========
+# ========== Mostrar beca individual si se pasa name ==========
 if beca_param and beca_param in becas['name'].unique():
+    # Obtener el nombre largo desde la columna 'nombre_de_la_beca'
+    nombre_visible = becas.loc[becas['name'] == beca_param, 'nombre_de_la_beca'].values
+    nombre_visible = nombre_visible[0] if len(nombre_visible) > 0 else beca_param
+
+    # Encabezado visual personalizado
     st.markdown(f"""
     <div style="background-color:#F1F6FF;padding:20px 10px;border-radius:10px;text-align:center;">
-        <h2 style="color:#0C1461;margin-bottom:0;">{beca_param}</h2>
+        <h2 style="color:#0C1461;margin-bottom:0;">{nombre_visible}</h2>
         <p style="color:#444;">Reporte exclusivo generado para esta beca</p>
     </div>
     """, unsafe_allow_html=True)
