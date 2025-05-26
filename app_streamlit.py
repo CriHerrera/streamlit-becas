@@ -50,10 +50,12 @@ params = st.query_params
 beca_param = params.get("name", [None])[0]
 
 # ========== Mostrar beca individual si se pasa name ==========
-# ========== Mostrar beca individual si se pasa name ==========
-if beca_param and beca_param in becas['name'].unique():
+if beca_param and any(becas['name'].str.strip().str.lower() == beca_param.strip().lower()):
     # Obtener el nombre largo desde la columna 'nombre_de_la_beca'
-    nombre_visible = becas.loc[becas['name'] == beca_param, 'nombre_de_la_beca'].values
+    nombre_visible = becas.loc[
+        becas['name'].str.strip().str.lower() == beca_param.strip().lower(),
+        'nombre_de_la_beca'
+    ].values
     nombre_visible = nombre_visible[0] if len(nombre_visible) > 0 else beca_param
 
     # Encabezado visual personalizado
@@ -65,9 +67,9 @@ if beca_param and beca_param in becas['name'].unique():
     """, unsafe_allow_html=True)
 
     # Filtrar
-    beca_est = pivot_estudiantes[pivot_estudiantes['Nombre de la Beca'] == beca_param]
-    beca_req = pivot_requisitos[pivot_requisitos['Nombre de la Beca'] == beca_param]
-    beca_pasos = pivot_pasos[pivot_pasos['Nombre de la Beca'] == beca_param]
+    beca_est = pivot_estudiantes[pivot_estudiantes['Nombre de la Beca'].str.lower() == beca_param.strip().lower()]
+    beca_req = pivot_requisitos[pivot_requisitos['Nombre de la Beca'].str.lower() == beca_param.strip().lower()]
+    beca_pasos = pivot_pasos[pivot_pasos['Nombre de la Beca'].str.lower() == beca_param.strip().lower()]
 
     # Tabs
     tab1, tab2, tab3 = st.tabs(["Estudiantes Nuevos/Antiguos", "Requisitos", "Pasos"])
@@ -83,49 +85,3 @@ if beca_param and beca_param in becas['name'].unique():
     with tab3:
         st.markdown("#### Pasos para Postulación")
         st.dataframe(beca_pasos, use_container_width=True)
-
-# ========== Si no hay parámetro, mostrar resumen general + botón de descarga ==========
-else:
-    st.markdown("### 📊 Resumen general de todas las becas")
-
-    tab1, tab2, tab3 = st.tabs(["Estudiantes Nuevos/Antiguos", "Requisitos", "Pasos"])
-
-    with tab1:
-        st.markdown("#### Frecuencia por tipo de estudiante")
-        st.dataframe(pivot_estudiantes, use_container_width=True)
-
-    with tab2:
-        st.markdown("#### Frecuencia de requisitos por beca")
-        st.dataframe(pivot_requisitos, use_container_width=True)
-
-    with tab3:
-        st.markdown("#### Frecuencia de pasos por beca")
-        st.dataframe(pivot_pasos, use_container_width=True)
-
-    # Generar CSV con links personalizados
-    st.markdown("---")
-    st.markdown("### 🔗 Descargar links personalizados por beca")
-
-    base_url = "https://app-becas-jderxfji947xde3v9uieca.streamlit.app"
-    becas_unicas = sorted(becas['name'].dropna().unique())
-    links = []
-
-    for nombre in becas_unicas:
-        encoded = urllib.parse.quote(nombre)
-        link = f"{base_url}/?name={encoded}"
-        links.append({"Nombre de la Beca": nombre, "Link Personalizado": link})
-
-    df_links = pd.DataFrame(links)
-
-    # Convertir a CSV en memoria
-    csv_buffer = StringIO()
-    df_links.to_csv(csv_buffer, index=False)
-    csv_bytes = csv_buffer.getvalue().encode()
-
-    # Botón de descarga
-    st.download_button(
-        label="📥 Descargar CSV con links",
-        data=csv_bytes,
-        file_name="links_becas.csv",
-        mime="text/csv"
-    )
