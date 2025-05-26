@@ -49,6 +49,7 @@ st.markdown(
 params = st.query_params
 beca_param = params.get("name", [None])[0]
 
+
 # ========== Mostrar beca individual si se pasa name ==========
 beca_param_lower = beca_param.strip().lower() if beca_param else None
 match_mask = becas['name'].astype(str).str.strip().str.lower() == beca_param_lower
@@ -58,6 +59,9 @@ if beca_param and match_mask.any():
     nombre_beca_filtrada = becas.loc[match_mask, 'name'].values[0]
     nombre_visible = becas.loc[match_mask, 'nombre_de_la_beca'].values[0]
 
+    # Enlace a la beca individual
+    st.write(f"[{nombre_visible}](url_para_beca_especifica)")
+
     # Encabezado visual personalizado
     st.markdown(f"""
     <div style="background-color:#F1F6FF;padding:20px 10px;border-radius:10px;text-align:center;">
@@ -65,6 +69,8 @@ if beca_param and match_mask.any():
         <p style="color:#444;">Reporte exclusivo generado para esta beca</p>
     </div>
     """, unsafe_allow_html=True)
+
+ 
 
     # Filtrar
     beca_est = pivot_estudiantes[pivot_estudiantes['Nombre de la Beca'] == nombre_beca_filtrada]
