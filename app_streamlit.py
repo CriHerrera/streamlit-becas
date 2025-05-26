@@ -8,6 +8,7 @@ Created on Mon May 19 11:24:36 2025
 import pandas as pd
 import streamlit as st
 import urllib.parse
+from io import StringIO
 
 # ========== Carga de datos ==========
 becas = pd.read_csv('becas_procesadas_para_dash.csv', sep=';')
@@ -50,7 +51,12 @@ beca_param = params.get("name", [None])[0]
 
 # ========== Mostrar beca individual si se pasa name ==========
 if beca_param and beca_param in becas['name'].unique():
-    st.markdown(f"### 📌 Reporte individual para: **{beca_param}**")
+    st.markdown(f"""
+    <div style="background-color:#F1F6FF;padding:20px 10px;border-radius:10px;text-align:center;">
+        <h2 style="color:#0C1461;margin-bottom:0;">{beca_param}</h2>
+        <p style="color:#444;">Reporte exclusivo generado para esta beca</p>
+    </div>
+    """, unsafe_allow_html=True)
 
     # Filtrar
     beca_est = pivot_estudiantes[pivot_estudiantes['Nombre de la Beca'] == beca_param]
@@ -72,7 +78,7 @@ if beca_param and beca_param in becas['name'].unique():
         st.markdown("#### Pasos para Postulación")
         st.dataframe(beca_pasos, use_container_width=True)
 
-# ========== Si no hay parámetro, mostrar todas las becas con links ==========
+# ========== Si no hay parámetro, mostrar resumen general + botón de descarga ==========
 else:
     st.markdown("### 📊 Resumen general de todas las becas")
 
@@ -90,4 +96,30 @@ else:
         st.markdown("#### Frecuencia de pasos por beca")
         st.dataframe(pivot_pasos, use_container_width=True)
 
+    # Generar CSV con links personalizados
+    st.markdown("---")
+    st.markdown("### 🔗 Descargar links personalizados por beca")
 
+    base_url = "https://app-becas-jderxfji947xde3v9uieca.streamlit.app"
+    becas_unicas = sorted(becas['name'].dropna().unique())
+    links = []
+
+    for nombre in becas_unicas:
+        encoded = urllib.parse.quote(nombre)
+        link = f"{base_url}/?name={encoded}"
+        links.append({"Nombre de la Beca": nombre, "Link Personalizado": link})
+
+    df_links = pd.DataFrame(links)
+
+    # Convertir a CSV en memoria
+    csv_buffer = StringIO()
+    df_links.to_csv(csv_buffer, index=False)
+    csv_bytes = csv_buffer.getvalue().encode()
+
+    # Botón de descarga
+    st.download_button(
+        label="📥 Descargar CSV con links",
+        data=csv_bytes,
+        file_name="links_becas.csv",
+        mime="text/csv"
+    )
