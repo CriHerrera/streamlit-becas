@@ -74,18 +74,6 @@ if beca_param and beca_param in becas['name'].unique():
 
 # ========== Si no hay parámetro, mostrar todas las becas con links ==========
 else:
-    st.info("Selecciona una beca desde los siguientes enlaces para ver su reporte individual.")
-
-    # Mostrar links por nombre de beca
-    st.markdown("### 🔗 Becas disponibles:")
-
-    for nombre_beca in sorted(becas['name'].unique()):
-        encoded = urllib.parse.quote(nombre_beca)
-        link = f"?name={encoded}"
-        st.markdown(f"- [{nombre_beca}]({link})", unsafe_allow_html=True)
-
-    # Opcional: mostrar resumen general también
-    st.markdown("---")
     st.markdown("### 📊 Resumen general de todas las becas")
 
     tab1, tab2, tab3 = st.tabs(["Estudiantes Nuevos/Antiguos", "Requisitos", "Pasos"])
@@ -101,4 +89,5 @@ else:
     with tab3:
         st.markdown("#### Frecuencia de pasos por beca")
         st.dataframe(pivot_pasos, use_container_width=True)
+
 
