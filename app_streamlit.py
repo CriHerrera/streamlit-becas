@@ -66,9 +66,8 @@ def load_images():
         st.error(f"Error al cargar las imágenes: {str(e)}")
         return None, None
 
-# Leer parámetro de la URL
-query_params = st.experimental_get_query_params()
-selected_school = query_params.get("colegio", [None])[0]
+# Leer parámetro de la URL (SOLO NUEVA API)
+selected_school = st.query_params.get("colegio", None)
 
 df, df_panel_grade = load_data()
 logo_base64, check_base64 = load_images()
@@ -87,8 +86,8 @@ if not selected_school:
     st.markdown("### Seleccione un colegio para ver su reporte:")
     for school in schools:
         if st.button(school):
-            st.experimental_set_query_params(colegio=school)
-            st.experimental_rerun()
+            st.query_params["colegio"] = school
+            st.rerun()
 else:
     # Página de reporte individual
     if logo_base64 is None or check_base64 is None:
@@ -105,8 +104,8 @@ else:
     
     # Botón para volver a la lista principal
     if st.button("⬅️ Volver a la lista de colegios"):
-        st.experimental_set_query_params()
-        st.experimental_rerun()
+        st.query_params.clear()
+        st.rerun()
     
     # Logo en la esquina superior derecha
     st.markdown(
