@@ -70,8 +70,12 @@ def load_images():
 query_params = st.query_params
 selected_school = query_params.get("colegio", [None])[0]
 
+df, df_panel_grade = load_data()
+logo_base64, check_base64 = load_images()
+schools = df["nombre_colegio"].dropna().unique()
+
 if not selected_school:
-    # Página principal: lista de links
+    # Página principal: lista de botones
     st.markdown(
         """
         <div style="background-color:#0C1461;padding:20px;border-radius:10px;text-align:center;">
@@ -81,46 +85,28 @@ if not selected_school:
         unsafe_allow_html=True
     )
     st.markdown("### Seleccione un colegio para ver su reporte:")
-    df, df_panel_grade = load_data()
-    schools = df["nombre_colegio"].dropna().unique()
-    
-    # Obtener la URL base actual
-    try:
-        url_base = st.get_url()
-    except AttributeError:
-        url_base = "/"
-
-    if url_base.endswith('/'):
-        url_base = url_base[:-1]
-
     for school in schools:
-        url = f"{url_base}?colegio={quote(school)}"
-        st.markdown(f"- [{school}]({url})")
+        if st.button(school):
+            st.experimental_set_query_params(colegio=school)
+            st.experimental_rerun()
 else:
     # Página de reporte individual
-    df, df_panel_grade = load_data()
-    logo_base64, check_base64 = load_images()
-    
     if logo_base64 is None or check_base64 is None:
         st.error("No se pudieron cargar las imágenes necesarias. Por favor, verifique que los archivos existan en la carpeta assets.")
         st.stop()
     
-    # Obtener lista de colegios
-    schools = df["nombre_colegio"].dropna().unique()
-    
-    if len(schools) == 0:
-        st.error("No se encontraron colegios en los datos. Por favor, verifique el archivo de datos.")
-        st.stop()
-    
-    # Mostrar reporte para el colegio seleccionado
     df_school = df[df["nombre_colegio"] == selected_school]
-    
     if df_school.empty:
         st.error(f"No se encontraron datos para el colegio {selected_school}")
         st.stop()
         
     fila = df_school.iloc[0]
     codigo_del_colegio = fila["campus_code"]
+    
+    # Botón para volver a la lista principal
+    if st.button("⬅️ Volver a la lista de colegios"):
+        st.experimental_set_query_params()
+        st.experimental_rerun()
     
     # Logo en la esquina superior derecha
     st.markdown(
