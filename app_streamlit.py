@@ -67,7 +67,7 @@ def load_images():
         return None, None
 
 # Leer parámetro de la URL
-query_params = st.query_params
+query_params = st.experimental_get_query_params()
 selected_school = query_params.get("colegio", [None])[0]
 
 df, df_panel_grade = load_data()
