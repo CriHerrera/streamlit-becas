@@ -19,7 +19,7 @@ st.set_page_config(
 )
 
 # Definir rutas base
-base_path = Path("C:/Users/crish/OneDrive - Universidad Adolfo Ibanez/Documents/GitHub/streamlit-becas")
+base_path = Path(__file__).parent.resolve()
 base_path_inputs = base_path / "inputs"
 
 # Cargar datos
