@@ -19,6 +19,94 @@ st.set_page_config(
     layout="wide"
 )
 
+# Custom CSS
+st.markdown("""
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #eaefff;
+        }
+        
+        .stApp {
+            background-color: #eaefff;
+        }
+        
+        h1, h2, h3 {
+            font-family: 'DM Sans', sans-serif;
+            color: black;
+        }
+        
+        .header {
+            background-color: #0C1461;
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            position: relative;
+            margin-top: 50px;
+        }
+        
+        .header h1 {
+            color: white;
+        }
+        
+        .table-container {
+            background-color: white;
+            padding: 30px;
+            margin: 20px;
+            border-radius: 10px;
+            box-shadow: 2px 2px 12px rgba(0,0,0,0.1);
+        }
+        
+        .stDataFrame {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 2px 2px 12px rgba(0,0,0,0.1);
+        }
+        
+        .stProgress > div > div {
+            background-color: #5DDBDB;
+        }
+        
+        .bar-row {
+            margin-bottom: 12px;
+        }
+        
+        .bar-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        
+        .bar {
+            width: 100%;
+            background-color: #ddd;
+            border-radius: 8px;
+            height: 24px;
+        }
+        
+        .bar-fill {
+            background-color: #5DDBDB;
+            height: 100%;
+            border-radius: 8px;
+        }
+        
+        .stButton > button {
+            background-color: #0C1461;
+            color: white;
+            border-radius: 8px;
+            padding: 10px 20px;
+            border: none;
+            transition: all 0.3s ease;
+        }
+        
+        .stButton > button:hover {
+            background-color: #5DDBDB;
+            color: white;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
 # Definir rutas base
 base_path = Path(__file__).parent.resolve()
 base_path_inputs = base_path / "inputs"
@@ -73,12 +161,13 @@ df, df_panel_grade = load_data()
 logo_base64, check_base64 = load_images()
 schools = df["nombre_colegio"].dropna().unique()
 
+
 if not selected_school:
     # Página principal: lista de botones
     st.markdown(
         """
-        <div style="background-color:#0C1461;padding:20px;border-radius:10px;text-align:center;">
-            <h1 style="color:white;font-family: 'DM Sans', sans-serif;">Reportes de Colegios</h1>
+        <div class="header">
+            <h1>Reportes de Colegios</h1>
         </div>
         """,
         unsafe_allow_html=True
@@ -119,18 +208,28 @@ else:
     # Estado actual del proceso
     st.markdown("### Estado actual del proceso")
     estado_admision = generar_estado_admision(fila)
+    st.markdown('<div class="table-container">', unsafe_allow_html=True)
     st.dataframe(
         pd.DataFrame(estado_admision),
         use_container_width=True,
         hide_index=True
     )
+    st.markdown('</div>', unsafe_allow_html=True)
     
     # Completitud de información
     st.markdown("### Completitud de información")
     completitud = generar_tabla_completitud(fila)
+    st.markdown('<div class="table-container">', unsafe_allow_html=True)
     for item in completitud:
-        st.markdown(f"**{item['Información']}** ({item['Porcentaje Completado']})")
-        st.progress(float(item['Porcentaje Completado'].strip('%')) / 100)
+        st.markdown(f"""
+            <div class="bar-row">
+                <span class="bar-label">{item['Información']} ({item['Porcentaje Completado']})</span>
+                <div class="bar">
+                    <div class="bar-fill" style="width: {item['Porcentaje Completado'].strip('%')}%"></div>
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
     
     # Resumen de participación
     st.markdown("### Resumen de Participación")
