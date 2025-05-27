@@ -9,7 +9,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# BLOQUE DE CSS GLOBAL
+{# BLOQUE DE CSS GLOBAL
 st.markdown("""
     <style>
         body {
@@ -105,7 +105,7 @@ st.markdown("""
         }
     </style>
 """, unsafe_allow_html=True)
-
+}
 
 # Descubrir secciones disponibles en la carpeta 'secciones'
 secciones_path = os.path.join(os.path.dirname(__file__), 'secciones')
