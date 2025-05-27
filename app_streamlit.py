@@ -10,6 +10,7 @@ from pdf_reports import (
     generar_grafico_grado,
     generar_imagen_base64_grafico
 )
+from urllib.parse import quote
 
 # Configuración de la página
 st.set_page_config(
@@ -82,10 +83,18 @@ if not selected_school:
     st.markdown("### Seleccione un colegio para ver su reporte:")
     df, df_panel_grade = load_data()
     schools = df["nombre_colegio"].dropna().unique()
+    
+    # Obtener la URL base actual
+    try:
+        url_base = st.get_url()
+    except AttributeError:
+        url_base = "/"
+
+    if url_base.endswith('/'):
+        url_base = url_base[:-1]
+
     for school in schools:
-        # Codificar el nombre para la URL
-        from urllib.parse import quote
-        url = f"?colegio={quote(school)}"
+        url = f"{url_base}?colegio={quote(school)}"
         st.markdown(f"- [{school}]({url})")
 else:
     # Página de reporte individual
