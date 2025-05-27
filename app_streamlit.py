@@ -4,7 +4,7 @@ import os
 
 # Configuración de la página
 st.set_page_config(
-    page_title="Reportes hola s",
+    page_title="Reportes hoaaaaaala s",
     page_icon="📊",
     layout="wide"
 )
