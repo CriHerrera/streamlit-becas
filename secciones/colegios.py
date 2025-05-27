@@ -10,9 +10,7 @@ from pdf_reports import (
     generar_imagen_base64_grafico
 )
 
-def mostrar(selected_school):
-    if not selected_school:
-        return
+def mostrar(selected_school=None):
     base_path = Path(__file__).parent.parent.resolve()
     base_path_inputs = base_path / "inputs"
     df = pd.read_csv(base_path_inputs / "estadisticas_completitud_dummys.csv")
@@ -21,6 +19,26 @@ def mostrar(selected_school):
     check_base64 = convertir_imagen_base64(base_path_inputs / "assets" / "ok.png")
     schools = df["nombre_colegio"].dropna().unique()
 
+    # Si no se pasa colegio, mostrar portada y botones
+    if selected_school is None:
+        selected_school = st.query_params.get("colegio", None)
+        if not selected_school:
+            st.markdown(
+                """
+                <div class="header">
+                    <h1>Reportes de Colegios</h1>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+            st.markdown("### Seleccione un colegio para ver su reporte:")
+            for school in schools:
+                if st.button(school):
+                    st.query_params["colegio"] = school
+                    st.rerun()
+            return
+
+    # Mostrar reporte individual
     df_school = df[df["nombre_colegio"] == selected_school]
     if df_school.empty:
         st.error(f"No se encontraron datos para el colegio {selected_school}")
