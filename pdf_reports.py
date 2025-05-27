@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 from jinja2 import Template
-from weasyprint import HTML
+#from weasyprint import HTML
 import matplotlib.pyplot as plt
 import base64
 from pathlib import Path
