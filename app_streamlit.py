@@ -104,6 +104,40 @@ st.markdown("""
             background-color: #5DDBDB;
             color: white;
         }
+        
+        /* Fondo y texto de las tablas de Streamlit */
+        .stDataFrame, .stTable {
+            background-color: white !important;
+            color: black !important;
+            border-radius: 10px !important;
+        }
+        /* Encabezados de tabla */
+        .stDataFrame th, .stTable th {
+            background-color: #5DDBDB !important;
+            color: #0C1461 !important;
+            font-weight: bold !important;
+            font-family: 'DM Sans', sans-serif !important;
+            font-size: 1.1em !important;
+        }
+        /* Celdas de tabla */
+        .stDataFrame td, .stTable td {
+            color: #222 !important;
+            font-family: 'Inter', sans-serif !important;
+            font-size: 1em !important;
+        }
+        /* Bordes suaves */
+        .stDataFrame table, .stTable table {
+            border-radius: 10px !important;
+            overflow: hidden !important;
+        }
+        /* Quitar fondo oscuro de filas seleccionadas */
+        .stDataFrame tr, .stTable tr {
+            background-color: white !important;
+        }
+        /* Mejorar padding */
+        .stDataFrame td, .stTable td, .stDataFrame th, .stTable th {
+            padding: 12px 16px !important;
+        }
     </style>
 """, unsafe_allow_html=True)
 
