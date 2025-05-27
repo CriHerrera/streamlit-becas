@@ -1,8 +1,6 @@
 import streamlit as st
 import importlib
 import os
-import pandas as pd
-from pathlib import Path
 
 # Configuración de la página
 st.set_page_config(
@@ -11,33 +9,17 @@ st.set_page_config(
     layout="wide"
 )
 
-# Cargar datos para la portada
-base_path = Path(__file__).parent.resolve()
-base_path_inputs = base_path / "inputs"
-df = pd.read_csv(base_path_inputs / "estadisticas_completitud_dummys.csv")
-schools = df["nombre_colegio"].dropna().unique()
+# Descubrir secciones disponibles en la carpeta 'secciones'
+secciones_path = os.path.join(os.path.dirname(__file__), 'secciones')
+secciones = [f[:-3] for f in os.listdir(secciones_path) if f.endswith('.py') and not f.startswith('__')]
 
 # Sidebar para seleccionar sección
-secciones = ["Colegios"]  # Puedes agregar más secciones aquí
-seccion = st.sidebar.selectbox("Selecciona una sección", secciones)
+seccion = st.sidebar.selectbox("Selecciona una sección", secciones, format_func=lambda x: x.capitalize())
 
-if seccion == "Colegios":
-    selected_school = st.query_params.get("colegio", None)
-    if not selected_school:
-        st.markdown(
-            """
-            <div class="header">
-                <h1>Reportes de Colegios</h1>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-        st.markdown("### Seleccione un colegio para ver su reporte:")
-        for school in schools:
-            if st.button(school):
-                st.query_params["colegio"] = school
-                st.rerun()
-    else:
-        colegios = importlib.import_module("secciones.colegios")
-        colegios.mostrar(selected_school)
+# Importar y mostrar la sección seleccionada
+def mostrar_seccion(nombre):
+    modulo = importlib.import_module(f'secciones.{nombre}')
+    modulo.mostrar()
+
+mostrar_seccion(seccion)
 
