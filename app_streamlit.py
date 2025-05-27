@@ -180,6 +180,48 @@ st.markdown("""
             font-size: 1.05em;
             font-family: 'Inter', sans-serif;
         }
+        /* Contenedor de la tabla */
+        .stDataFrame, .stTable {
+            background-color: white !important;
+            border-radius: 10px !important;
+            box-shadow: 2px 2px 12px rgba(0,0,0,0.1) !important;
+            padding: 30px !important;
+            margin: 20px 0 !important;
+        }
+        /* Tabla interna */
+        .stDataFrame table, .stTable table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+            margin: 20px 0 !important;
+            border-radius: 10px !important;
+            overflow: hidden !important;
+        }
+        /* Encabezado */
+        .stDataFrame th, .stTable th {
+            background-color: #5DDBDB !important;
+            color: white !important;
+            padding: 12px !important;
+            font-family: 'DM Sans', sans-serif !important;
+            font-size: 1.08em !important;
+            border: 1px solid #BDC3C7 !important;
+        }
+        /* Celdas */
+        .stDataFrame td, .stTable td {
+            background-color: white !important;
+            color: #222 !important;
+            padding: 12px !important;
+            border: 1px solid #BDC3C7 !important;
+            font-family: 'Inter', sans-serif !important;
+            font-size: 1em !important;
+        }
+        /* Quitar fondo oscuro de filas seleccionadas */
+        .stDataFrame tr, .stTable tr {
+            background-color: white !important;
+        }
+        /* Texto pequeño */
+        .small-text {
+            font-size: 12px !important;
+        }
     </style>
 """, unsafe_allow_html=True)
 
@@ -332,7 +374,7 @@ else:
     for grado in grafico_grados:
         st.markdown(f"""
             <div class="bar-row">
-                <span class="bar-label">{grado['Grado']} ({grado['Cantidad']} estudiantes
+                <span class="bar-label">{grado['Grado']} ({grado['Cantidad']} estudiantes)</span>
                 <div class="bar">
                     <div class="bar-fill" style="width: {grado['Porcentaje']}%"></div>
                 </div>
