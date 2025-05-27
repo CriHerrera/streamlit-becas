@@ -93,19 +93,12 @@ else:
     if logo_base64 is None or check_base64 is None:
         st.error("No se pudieron cargar las imágenes necesarias. Por favor, verifique que los archivos existan en la carpeta assets.")
         st.stop()
-    
     df_school = df[df["nombre_colegio"] == selected_school]
     if df_school.empty:
         st.error(f"No se encontraron datos para el colegio {selected_school}")
         st.stop()
-        
     fila = df_school.iloc[0]
     codigo_del_colegio = fila["campus_code"]
-    
-    # Botón para volver a la lista principal
-    if st.button("⬅️ Volver a la lista de colegios"):
-        st.query_params.clear()
-        st.rerun()
     
     # Logo en la esquina superior derecha
     st.markdown(
