@@ -108,27 +108,33 @@ st.markdown("""
         /* Fondo y texto de las tablas de Streamlit */
         .stDataFrame, .stTable {
             background-color: white !important;
-            color: black !important;
+            color: #222 !important;
             border-radius: 10px !important;
+            font-family: 'Inter', sans-serif !important;
         }
         /* Encabezados de tabla */
         .stDataFrame th, .stTable th {
             background-color: #5DDBDB !important;
-            color: #0C1461 !important;
+            color: white !important;
             font-weight: bold !important;
             font-family: 'DM Sans', sans-serif !important;
             font-size: 1.1em !important;
+            border: none !important;
         }
         /* Celdas de tabla */
         .stDataFrame td, .stTable td {
+            background-color: white !important;
             color: #222 !important;
             font-family: 'Inter', sans-serif !important;
             font-size: 1em !important;
+            border: none !important;
         }
         /* Bordes suaves */
         .stDataFrame table, .stTable table {
             border-radius: 10px !important;
             overflow: hidden !important;
+            border-collapse: separate !important;
+            border-spacing: 0 !important;
         }
         /* Quitar fondo oscuro de filas seleccionadas */
         .stDataFrame tr, .stTable tr {
@@ -136,7 +142,11 @@ st.markdown("""
         }
         /* Mejorar padding */
         .stDataFrame td, .stTable td, .stDataFrame th, .stTable th {
-            padding: 12px 16px !important;
+            padding: 14px 18px !important;
+        }
+        /* Sombra sutil */
+        .stDataFrame, .stTable {
+            box-shadow: 2px 2px 12px rgba(0,0,0,0.07);
         }
     </style>
 """, unsafe_allow_html=True)
