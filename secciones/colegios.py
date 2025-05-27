@@ -11,15 +11,12 @@ from pdf_reports import (
 )
 
 def mostrar(selected_school):
-    if not selected_school:
-        return
     base_path = Path(__file__).parent.parent.resolve()
     base_path_inputs = base_path / "inputs"
     df = pd.read_csv(base_path_inputs / "estadisticas_completitud_dummys.csv")
     df_panel_grade = pd.read_csv(base_path_inputs / "panel_grade.csv")
     logo_base64 = convertir_imagen_base64(base_path_inputs / "assets" / "TETHER.png")
     check_base64 = convertir_imagen_base64(base_path_inputs / "assets" / "ok.png")
-    schools = df["nombre_colegio"].dropna().unique()
 
     df_school = df[df["nombre_colegio"] == selected_school]
     if df_school.empty:
