@@ -171,6 +171,15 @@ st.markdown("""
         .stButton > button {
             color: white !important;
         }
+        .info-box {
+            background: #d6f6fb;
+            color: #111;
+            border-radius: 6px;
+            padding: 12px 18px;
+            margin-bottom: 18px;
+            font-size: 1.05em;
+            font-family: 'Inter', sans-serif;
+        }
     </style>
 """, unsafe_allow_html=True)
 
@@ -281,6 +290,14 @@ else:
     
     # Estado actual del proceso
     st.markdown("### Estado actual del proceso")
+    st.markdown(
+        """
+        <div class="info-box">
+            A continuación dejamos una tabla con todos los indicadores que podemos ver desde la plataforma y a los cuales tenemos acceso:
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
     estado_admision = generar_estado_admision(fila)
     st.markdown('<div class="table-container">', unsafe_allow_html=True)
     st.dataframe(
