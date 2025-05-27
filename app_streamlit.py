@@ -65,23 +65,23 @@ st.markdown("""
         }
         
         .custom-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-family: 'Inter', sans-serif;
-    margin-top: 10px;
-}
-.custom-table thead {
-    background-color: #5DDBDB;
-    color: white;
-    font-weight: bold;
-}
-.custom-table td, .custom-table th {
-    padding: 14px 18px;
-    border: none;
-}
-.custom-table tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
+         width: 100%;
+         border-collapse: collapse;
+          font-family: 'Inter', sans-serif;
+         margin-top: 10px;
+        }       
+        .custom-table thead {
+        background-color: #5DDBDB;
+        color: white;
+        font-weight: bold;
+        }
+        .custom-table td, .custom-table th {
+        padding: 14px 18px;
+        border: none;
+        }
+        .custom-table tr:nth-child(even) {
+        background-color: #f9f9f9;
+        }
         .stProgress > div > div {
             background-color: #5DDBDB;
         }
