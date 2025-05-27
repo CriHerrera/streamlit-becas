@@ -64,6 +64,24 @@ st.markdown("""
             box-shadow: 2px 2px 12px rgba(0,0,0,0.1);
         }
         
+        .custom-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Inter', sans-serif;
+    margin-top: 10px;
+}
+.custom-table thead {
+    background-color: #5DDBDB;
+    color: white;
+    font-weight: bold;
+}
+.custom-table td, .custom-table th {
+    padding: 14px 18px;
+    border: none;
+}
+.custom-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
         .stProgress > div > div {
             background-color: #5DDBDB;
         }
@@ -180,48 +198,6 @@ st.markdown("""
             font-size: 1.05em;
             font-family: 'Inter', sans-serif;
         }
-        /* Contenedor de la tabla */
-        .stDataFrame, .stTable {
-            background-color: white !important;
-            border-radius: 10px !important;
-            box-shadow: 2px 2px 12px rgba(0,0,0,0.1) !important;
-            padding: 30px !important;
-            margin: 20px 0 !important;
-        }
-        /* Tabla interna */
-        .stDataFrame table, .stTable table {
-            width: 100% !important;
-            border-collapse: collapse !important;
-            margin: 20px 0 !important;
-            border-radius: 10px !important;
-            overflow: hidden !important;
-        }
-        /* Encabezado */
-        .stDataFrame th, .stTable th {
-            background-color: #5DDBDB !important;
-            color: white !important;
-            padding: 12px !important;
-            font-family: 'DM Sans', sans-serif !important;
-            font-size: 1.08em !important;
-            border: 1px solid #BDC3C7 !important;
-        }
-        /* Celdas */
-        .stDataFrame td, .stTable td {
-            background-color: white !important;
-            color: #222 !important;
-            padding: 12px !important;
-            border: 1px solid #BDC3C7 !important;
-            font-family: 'Inter', sans-serif !important;
-            font-size: 1em !important;
-        }
-        /* Quitar fondo oscuro de filas seleccionadas */
-        .stDataFrame tr, .stTable tr {
-            background-color: white !important;
-        }
-        /* Texto pequeño */
-        .small-text {
-            font-size: 12px !important;
-        }
     </style>
 """, unsafe_allow_html=True)
 
@@ -331,22 +307,30 @@ else:
     """)
     
     # Estado actual del proceso
-    st.markdown("### Estado actual del proceso")
-
-    # Texto explicativo normal, sin recuadro
+    # Texto explicativo
     st.markdown(
         "A continuación dejamos una tabla con todos los indicadores que podemos ver desde la plataforma y a los cuales tenemos acceso:"
     )
+
+    # Generar DataFrame desde la fila del colegio seleccionado
     estado_admision = generar_estado_admision(fila)
-    st.dataframe(
-        pd.DataFrame(estado_admision),
-        use_container_width=True,
-        hide_index=True
+    estado_df = pd.DataFrame(estado_admision)
+
+    # Convertir la tabla en HTML directamente (sin función)
+    tabla_html = estado_df.to_html(classes='custom-table', index=False, border=0)
+
+    # Mostrar tabla con contenedor y estilo
+    st.markdown(
+        f"""
+        <div class="table-container">
+            {tabla_html}
+        </div>
+        """,
+        unsafe_allow_html=True
     )
-    
+
     # Completitud de información
     st.markdown("### Completitud de información")
-    
     #Texto explicativo normal, sin recuadro
     st.markdown(
         "Porcentaje de estudiantes matriculados que cuentan con la siguiente información:"
@@ -361,13 +345,13 @@ else:
                 </div>
             </div>
         """, unsafe_allow_html=True)
-    
+
     # Resumen de participación
     st.markdown("### Resumen de Participación")
     participacion = generar_lista_participacion(fila, check_base64)
     for item in participacion:
         st.markdown(f"{item['estado']} {item['texto']}", unsafe_allow_html=True)
-    
+
     # Matrícula por grado
     st.markdown("### Matrícula por grado")
     grafico_grados = generar_grafico_grado(df_panel_grade, codigo_del_colegio)
@@ -380,7 +364,7 @@ else:
                 </div>
             </div>
         """, unsafe_allow_html=True)
-    
+
     # Gráfico de barras
     grafico_base64 = generar_imagen_base64_grafico(df_panel_grade, codigo_del_colegio)
     if grafico_base64:
