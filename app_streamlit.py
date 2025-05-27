@@ -25,25 +25,45 @@ base_path_inputs = base_path / "inputs"
 # Cargar datos
 @st.cache_data
 def load_data():
-    df = pd.read_csv(base_path_inputs / "estadisticas_completitud_dummys.csv")
-    df_panel_grade = pd.read_csv(base_path_inputs / "panel_grade.csv")
+    # Cargar el primer DataFrame con tipos específicos
+    df = pd.read_csv(
+        base_path_inputs / "estadisticas_completitud_dummys.csv",
+        dtype={
+            'campus_code': str,
+            'nombre_colegio': str,
+            'colegio_notificado_colaboracion': int,
+            'colegio_firmo_compromisos': int,
+            'colegio_envio_base': int,
+            'napsis': int
+        }
+    )
     
-    # Asegurar que los códigos sean strings
-    df["campus_code"] = df["campus_code"].astype(str)
-    df_panel_grade["campusId"] = df_panel_grade["campusId"].astype(str)
+    # Cargar el segundo DataFrame con low_memory=False para evitar advertencias de tipos mixtos
+    df_panel_grade = pd.read_csv(
+        base_path_inputs / "panel_grade.csv",
+        low_memory=False,
+        dtype={
+            'campusId': str,
+            'gradetrack_name': str
+        }
+    )
     
     return df, df_panel_grade
 
 # Cargar imágenes
 @st.cache_data
 def load_images():
-    ruta_logo = base_path_inputs / "assets" / "TETHER.png"
-    ruta_check = base_path_inputs / "assets" / "ok.png"
-    
-    logo_base64 = convertir_imagen_base64(ruta_logo)
-    check_base64 = convertir_imagen_base64(ruta_check)
-    
-    return logo_base64, check_base64
+    try:
+        ruta_logo = base_path_inputs / "assets" / "TETHER.png"
+        ruta_check = base_path_inputs / "assets" / "ok.png"
+        
+        logo_base64 = convertir_imagen_base64(ruta_logo)
+        check_base64 = convertir_imagen_base64(ruta_check)
+        
+        return logo_base64, check_base64
+    except Exception as e:
+        st.error(f"Error al cargar las imágenes: {str(e)}")
+        return None, None
 
 # Título principal
 st.markdown(
@@ -60,8 +80,16 @@ try:
     df, df_panel_grade = load_data()
     logo_base64, check_base64 = load_images()
     
+    if logo_base64 is None or check_base64 is None:
+        st.error("No se pudieron cargar las imágenes necesarias. Por favor, verifique que los archivos existan en la carpeta assets.")
+        st.stop()
+    
     # Obtener lista de colegios
     schools = df["nombre_colegio"].dropna().unique()
+    
+    if len(schools) == 0:
+        st.error("No se encontraron colegios en los datos. Por favor, verifique el archivo de datos.")
+        st.stop()
     
     # Sidebar para selección de colegio
     st.sidebar.title("Selección de Colegio")
@@ -74,6 +102,11 @@ try:
     # Mostrar reporte para el colegio seleccionado
     if selected_school:
         df_school = df[df["nombre_colegio"] == selected_school]
+        
+        if df_school.empty:
+            st.error(f"No se encontraron datos para el colegio {selected_school}")
+            st.stop()
+            
         fila = df_school.iloc[0]
         codigo_del_colegio = fila["campus_code"]
         
