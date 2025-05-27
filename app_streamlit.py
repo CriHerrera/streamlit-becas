@@ -290,16 +290,13 @@ else:
     
     # Estado actual del proceso
     st.markdown("### Estado actual del proceso")
-    st.markdown(
-        """
-        <div class="info-box">
-            A continuación dejamos una tabla con todos los indicadores que podemos ver desde la plataforma y a los cuales tenemos acceso:
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+
+    # Tabla y texto explicativo en el mismo recuadro blanco
     estado_admision = generar_estado_admision(fila)
     st.markdown('<div class="table-container">', unsafe_allow_html=True)
+    st.markdown(
+        "A continuación dejamos una tabla con todos los indicadores que podemos ver desde la plataforma y a los cuales tenemos acceso:"
+    )
     st.dataframe(
         pd.DataFrame(estado_admision),
         use_container_width=True,
