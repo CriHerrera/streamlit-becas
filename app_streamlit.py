@@ -159,6 +159,18 @@ st.markdown("""
         .stButton > button {
             color: white !important;
         }
+        /* Forzar color negro en todos los textos de markdown y contenedores de texto */
+        .stMarkdown, .markdown-text-container, .stApp, body, p, span, div, label {
+            color: #111 !important;
+        }
+        /* Mantener títulos en header en blanco */
+        .header h1, .header h2, .header h3 {
+            color: white !important;
+        }
+        /* Botones siguen igual */
+        .stButton > button {
+            color: white !important;
+        }
     </style>
 """, unsafe_allow_html=True)
 
