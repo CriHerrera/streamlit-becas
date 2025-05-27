@@ -196,7 +196,14 @@ else:
     )
     
     # Título del reporte
-    st.markdown(f"## Informe Avance Colegio {selected_school}")
+    st.markdown(
+        f"""
+        <div class="header">
+            <h1>Informe Avance Colegio {selected_school}</h1>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
     
     # Descripción
     st.markdown("""
