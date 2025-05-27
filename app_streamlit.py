@@ -198,6 +198,39 @@ st.markdown("""
             font-size: 1.05em;
             font-family: 'Inter', sans-serif;
         }
+        /* Personaliza solo la tabla, no el fondo */
+        .stDataFrame, .stTable {
+            background: transparent !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+        .stDataFrame table, .stTable table {
+            background: transparent !important;
+            border-radius: 10px !important;
+            border-collapse: collapse !important;
+            width: 100% !important;
+        }
+        .stDataFrame th, .stTable th {
+            background-color: #5DDBDB !important;
+            color: white !important;
+            padding: 12px !important;
+            font-family: 'DM Sans', sans-serif !important;
+            font-size: 1.08em !important;
+            border: 1px solid #BDC3C7 !important;
+        }
+        .stDataFrame td, .stTable td {
+            background-color: white !important;
+            color: #222 !important;
+            padding: 12px !important;
+            border: 1px solid #BDC3C7 !important;
+            font-family: 'Inter', sans-serif !important;
+            font-size: 1em !important;
+        }
+        .stDataFrame tr, .stTable tr {
+            background: transparent !important;
+        }
     </style>
 """, unsafe_allow_html=True)
 
@@ -316,18 +349,8 @@ else:
     estado_admision = generar_estado_admision(fila)
     estado_df = pd.DataFrame(estado_admision)
 
-    # Convertir la tabla en HTML directamente (sin función)
-    tabla_html = estado_df.to_html(classes='custom-table', index=False, border=0)
-
-    # Mostrar tabla con contenedor y estilo
-    st.markdown(
-        f"""
-        <div class="table-container">
-            {tabla_html}
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    # Tabla interactiva, sin bloque blanco extra
+    st.dataframe(estado_df, use_container_width=True, hide_index=True)
 
     # Completitud de información
     st.markdown("### Completitud de información")
