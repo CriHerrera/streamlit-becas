@@ -2,6 +2,13 @@ import streamlit as st
 import importlib
 import os
 
+# Configuración de la página
+st.set_page_config(
+    page_title="Reportes de Colegios",
+    page_icon="📊",
+    layout="wide"
+)
+
 # BLOQUE DE CSS GLOBAL
 st.markdown("""
     <style>
@@ -99,12 +106,6 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Configuración de la página
-st.set_page_config(
-    page_title="Reportes de Colegios",
-    page_icon="📊",
-    layout="wide"
-)
 
 # Descubrir secciones disponibles en la carpeta 'secciones'
 secciones_path = os.path.join(os.path.dirname(__file__), 'secciones')
