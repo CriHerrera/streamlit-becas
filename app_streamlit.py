@@ -296,9 +296,9 @@ else:
     st.markdown(
         """
         <div class="table-container">
-            <p style="margin-bottom: 16px; font-size: 1.08em;">
+            <div style="margin-bottom: 12px;">
                 A continuación dejamos una tabla con todos los indicadores que podemos ver desde la plataforma y a los cuales tenemos acceso:
-            </p>
+            </div>
         """,
         unsafe_allow_html=True
     )
