@@ -98,5 +98,5 @@ def mostrar():
             """, unsafe_allow_html=True)
         grafico_base64 = generar_imagen_base64_grafico(df_panel_grade, codigo_del_colegio)
         if grafico_base64:
-            st.markdown("### Distribución de matrícula por grado")
+            st.markdown("### Distribución de matrícula Hola ")
             st.image(f"data:image/png;base64,{grafico_base64}", use_container_width=True) 
