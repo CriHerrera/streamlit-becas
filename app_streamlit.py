@@ -332,7 +332,7 @@ else:
     for grado in grafico_grados:
         st.markdown(f"""
             <div class="bar-row">
-                <span class="bar-label">{grado['Grado']} ({grado['Cantidad']} estudiantes, {grado['Porcentaje']}%)</span>
+                <span class="bar-label">{grado['Grado']} ({grado['Cantidad']} estudiantes
                 <div class="bar">
                     <div class="bar-fill" style="width: {grado['Porcentaje']}%"></div>
                 </div>
