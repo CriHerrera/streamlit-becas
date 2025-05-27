@@ -304,6 +304,11 @@ else:
     
     # Completitud de información
     st.markdown("### Completitud de información")
+    
+    #Texto explicativo normal, sin recuadro
+    st.markdown(
+        "Porcentaje de estudiantes matriculados que cuentan con la siguiente información:"
+    )
     completitud = generar_tabla_completitud(fila)
     for item in completitud:
         st.markdown(f"""
@@ -325,8 +330,14 @@ else:
     st.markdown("### Matrícula por grado")
     grafico_grados = generar_grafico_grado(df_panel_grade, codigo_del_colegio)
     for grado in grafico_grados:
-        st.markdown(f"**{grado['Grado']}** - {grado['Cantidad']} estudiantes")
-        st.progress(grado['Porcentaje'] / 100)
+        st.markdown(f"""
+            <div class="bar-row">
+                <span class="bar-label">{grado['Grado']} ({grado['Cantidad']} estudiantes, {grado['Porcentaje']}%)</span>
+                <div class="bar">
+                    <div class="bar-fill" style="width: {grado['Porcentaje']}%"></div>
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
     
     # Gráfico de barras
     grafico_base64 = generar_imagen_base64_grafico(df_panel_grade, codigo_del_colegio)
