@@ -148,6 +148,17 @@ st.markdown("""
         .stDataFrame, .stTable {
             box-shadow: 2px 2px 12px rgba(0,0,0,0.07);
         }
+        body, .stApp, .markdown-text-container, .stMarkdown, p, span, label, div {
+            color: #111 !important;
+        }
+        /* Si quieres que los títulos sigan siendo blancos en el header: */
+        .header h1, .header h2, .header h3 {
+            color: white !important;
+        }
+        /* Botones siguen igual */
+        .stButton > button {
+            color: white !important;
+        }
     </style>
 """, unsafe_allow_html=True)
 
