@@ -159,7 +159,7 @@ try:
         grafico_base64 = generar_imagen_base64_grafico(df_panel_grade, codigo_del_colegio)
         if grafico_base64:
             st.markdown("### Distribución de matrícula por grado")
-            st.image(f"data:image/png;base64,{grafico_base64}", use_column_width=True)
+            st.image(f"data:image/png;base64,{grafico_base64}", use_container_width=True)
         
 except Exception as e:
     st.error(f"Error al cargar los datos: {str(e)}")
