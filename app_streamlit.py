@@ -5,7 +5,7 @@ import pandas as pd
 # Paths
 # Buscar el archivo en el directorio inputs
 input_path = os.path.join(os.path.dirname(__file__), 'inputs', 'becas_procesadas_para_dash.csv')
-becas = pd.read_csv(input_path, sep=";")
+becas = pd.read_csv('becas_procesadas_para_dash.csv', sep=";")
 
 # Colapsar por name y numero_corrida
 becas_collapsed = becas.groupby(['name', 'numero_corrida']).first().reset_index()
