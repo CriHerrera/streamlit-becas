@@ -3,8 +3,8 @@ import os
 import pandas as pd
 
 # Paths
-pathData_inputs = r"C:\Users\crish\ConsiliumBots Dropbox\ConsiliumBots\Projects\Chile\HigherEd\intermediante\becas chile"
-becas = pd.read_csv(os.path.join(pathData_inputs, 'becas_procesadas_para_dash.csv'), sep=";")
+# Usar ruta relativa al directorio actual
+becas = pd.read_csv('becas_procesadas_para_dash.csv', sep=";")
 
 # Colapsar por name y numero_corrida
 becas_collapsed = becas.groupby(['name', 'numero_corrida']).first().reset_index()
